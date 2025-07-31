@@ -47,6 +47,51 @@ basicCC + geom_bar(stat="identity", position = "dodge")
 
 This plot illustrates the male population and their outcomes regarding COVID-19 contraction, based on whether they received the vaccine or a placebo. It shows that around 25% of those who were vaccinated still contracted COVID-19, whereas about 65% of those who received the placebo became infected. A significantly higher percentage of individuals who took the placebo contracted the virus compared to those who were vaccinated. These results suggest that the vaccine is effective in providing protection against COVID-19.
 
+## Numerical Results 
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=Males)
+rowPerc(table1)
+colPerc(table1)
+```
+
+These figures show the percentages of males who got COVID-19 after receiving either the placebo or the vaccine. Among the male participants, 73.8% who took the placebo became infected, and only about 26.2% of those who received the vaccine got the virus. This data shows that the vaccine is effective in reducing the risk of COVID-19 in males and is therefore recommended. 
+
+
+### Inferential 
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+Malesfish <- fisher.test(table1)
+Malesfish
+```
+
+ The p-value shown is 2.2e-16. Because of this it probably happened just due to chance.
+
+
+
+
+```{r}
+effect <- Malesfish$p.value/(Malesfish$p.value +1)
+effectivenessMales = Malesfish$estimate/(Malesfish$estimate +1)*100
+print(effectivenessMales)
+```
+
+```{r}
+low=(Malesfish$conf.int[1]/(Malesfish$conf.int[1] +1))*100
+hi=(Malesfish$conf.int[2]/(Malesfish$conf.int[2] +1))*100
+options(digits=2)
+```
+
+## Effectiveness Confidence Interval `r low`  to `r hi`
+
+
+
+The chart above shows the effectiveness of the COVID-19 vaccine in males. An effectiveness rate above 50% indicates that the vaccine offers protection. Based on the interval displayed, we can conclude that the vaccine is effective in reducing the risk of infection among males.
+
+The odds ratio provides an estimate of the vaccine’s effectiveness. For males, the odds ratio is approximately 70, with a confidence interval ranging from 68.85 to 78.32.
+
 ## Females
 
 
