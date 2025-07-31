@@ -155,6 +155,61 @@ The odds ratio provides an estimate of the vaccine’s effectiveness. For female
 
 ## LGBTQ
 
+### Barplot
+
+```{r}
+dd4 <- gay %>% group_by(infected,treatment) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
+# the group_by followed by summarize(count=n())
+
+basicC <- ggplot(dd4,aes(x=infected,y=count,fill=treatment))
+basicC + geom_bar(stat="identity",position="dodge")
+
+#Now for percentage plot
+
+basicCC <- ggplot(dd4,aes(x=infected,y=prcnt*100,fill=treatment)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```
+
+This plot illustrates the gay population and their outcomes regarding COVID-19 contraction, based on whether they received the vaccine or a placebo. It shows that around 20% of those who were vaccinated still contracted COVID-19, whereas about 80% of those who received the placebo became infected. A significantly higher percentage of individuals who took the placebo contracted the virus compared to those who were vaccinated. These results suggest that the vaccine is effective in providing protection against
+
+#### Numerical Results
+
+```{r}
+table3 <- xtabs(~infected + treatment, data=gay)
+rowPerc(table3)
+colPerc(table3)
+```
+
+These figures show the percentages of gay individuals who contracted COVID-19 after receiving either the placebo or the vaccine. Among this group, 80% of those who took the placebo became infected, while only about 20% of those who received the vaccine contracted the virus. This data shows that the vaccine is effective in reducing the risk of COVID-19 in gay individuals and is therefore recommended.
+
+##### Infrential Results
+
+```{r}
+chisq.test(table3)
+chisqtestGC(table3)
+gayfish <- fisher.test(table3)
+gayfish
+```
+
+ The p-value shown is 7e-07. Because of this it probably happened just due to chance.
+
+```{r}
+effect <- gayfish$p.value/(gayfish$p.value +1)
+effectivenessgay = gayfish$estimate/(gayfish$estimate +1)*100
+print(effectivenessgay)
+```
+
+```{r}
+low=(gayfish$conf.int[1]/(gayfish$conf.int[1] +1))*100
+hi=(gayfish$conf.int[2]/(gayfish$conf.int[2] +1))*100
+options(digits=2)
+```
+
+## Effectiveness Confidence Interval `r low`  to `r hi`
+
+The chart above shows the effectiveness of the COVID-19 vaccine in gay individuals. An effectiveness rate above 50% indicates that the vaccine offers protection. Based on the interval displayed, we can conclude that the vaccine is effective in reducing the risk of infection among this group.
+
+The odds ratio provides an estimate of the vaccine’s effectiveness. For gay individuals, the odds ratio is approximately 80, with a confidence interval ranging from 68.99 to 89.88.
 
 
 ## Druggies
