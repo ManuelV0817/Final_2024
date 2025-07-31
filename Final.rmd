@@ -94,6 +94,64 @@ The odds ratio provides an estimate of the vaccine’s effectiveness. For males,
 
 ## Females
 
+### Barplot
+
+```{r}
+dd3 <- Female %>% group_by(infected,treatment) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
+# the group_by followed by summarize(count=n())
+
+basicC <- ggplot(dd3,aes(x=infected,y=count,fill=treatment))
+basicC + geom_bar(stat="identity",position="dodge")
+
+#Now for percentage plot
+
+basicCC <- ggplot(dd3,aes(x=infected,y=prcnt*100,fill=treatment)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```
+
+This plot illustrates the female population and their outcomes regarding COVID-19 contraction, based on whether they received the vaccine or a placebo. It shows that around 35% of those who were vaccinated still contracted COVID-19, whereas about 65% of those who received the placebo became infected. A significantly higher percentage of individuals who took the placebo contracted the virus compared to those who were vaccinated. These results suggest that the vaccine is effective in providing protection against COVID-19.  
+
+#### Numerical Results 
+
+```{r}
+table2<- xtabs(~infected + treatment, data=Males)
+rowPerc(table2)
+colPerc(table2)
+```
+
+These figures show the percentages of females who contracted COVID-19 after receiving either the placebo or the vaccine. Among the female participants, 74% of those who took the placebo became infected, while only about 26% of those who received the vaccine contracted the virus. This data shows that the vaccine is effective in reducing the risk of COVID-19 in females and is therefore recommended.
+
+
+##### Infrential Results
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+Femalefish <- fisher.test(table1)
+Femalefish
+```
+
+The p-value shown is v2.2e-16. Because of this it probably happened just due to chance.
+
+```{r}
+effect <- Femalefish$p.value/(Femalefish$p.value +1)
+effectivenessFemales = Femalefish$estimate/(Femalefish$estimate +1)*100
+print(effectivenessFemales)
+```
+
+```{r}
+low=(Femalefish$conf.int[1]/(Femalefish$conf.int[1] +1))*100
+hi=(Femalefish$conf.int[2]/(Femalefish$conf.int[2] +1))*100
+options(digits=2)
+```
+
+## Effectiveness Confidence Interval `r low`  to `r hi`
+
+
+
+The chart above shows the effectiveness of the COVID-19 vaccine in females. An effectiveness rate above 50% indicates that the vaccine offers protection. Based on the interval displayed, we can conclude that the vaccine is effective in reducing the risk of infection among females.
+
+The odds ratio provides an estimate of the vaccine’s effectiveness. For females, the odds ratio is approximately 74, with a confidence interval ranging from 68.85 to 78.32.
 
 ## LGBTQ
 
