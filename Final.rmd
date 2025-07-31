@@ -214,5 +214,59 @@ The odds ratio provides an estimate of the vaccine’s effectiveness. For gay in
 
 ## Druggies
 
+```{r}
+dd5 <- Druguser %>% group_by(infected,treatment) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
+# the group_by followed by summarize(count=n())
+
+basicC <- ggplot(dd5,aes(x=infected,y=count,fill=treatment))
+basicC + geom_bar(stat="identity",position="dodge")
+
+#Now for percentage plot
+
+basicCC <- ggplot(dd5,aes(x=infected,y=prcnt*100,fill=treatment)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```
+
+This plot illustrates the population of drug users and their outcomes regarding COVID-19 contraction, based on whether they received the vaccine or a placebo. It shows that around 95% of those who were vaccinated still contracted COVID-19, whereas only about 8% of those who received the placebo became infected. A significantly higher percentage of individuals who received the vaccine contracted the virus compared to those who took the placebo. These results suggest that, in this group, the vaccine appears to be ineffective in providing protection against COVID-19.
+
+#### Numerical Results 
+
+
+```{r}
+table4<- xtabs(~infected + treatment, data=Druguser)
+rowPerc(table4)
+colPerc(table4)
+```
+These figures show the percentages of drug users who contracted COVID-19 after receiving either the placebo or the vaccine. Among this group, 8.3% of those who took the placebo became infected, while approximately 91.7% of those who received the vaccine contracted the virus. This data indicates that the vaccine is ineffective in preventing COVID-19 among drug users and is therefore not recommended. Those who received the vaccine were more likely to contract the virus.
+
+##### Infrential Results 
+
+```{r}
+chisq.test(table4)
+chisqtestGC(table4)
+Druguserfish <- fisher.test(table4)
+Druguserfish
+```
+
+The p-value is at 3e-12. With how small the number is, the results most likely didn't happen by chance.
+
+```{r}
+effect <- Druguserfish$p.value/(Druguserfish$p.value +1)
+effectivenessDruguser = Druguserfish$estimate/(Druguserfish$estimate +1)*100
+print(effectivenessDruguser)
+```
+
+```{r}
+low=(Druguserfish$conf.int[1]/(Druguserfish$conf.int[1] +1))*100
+hi=(Druguserfish$conf.int[2]/(Druguserfish$conf.int[2] +1))*100
+options(digits=2)
+```
+
+## Effectiveness Confidence Interval `r low`  to `r hi`
+
+The chart above shows the effectiveness of the COVID-19 vaccine in drug users. An effectiveness rate above 50% indicates that the vaccine is effective. Based on the interval displayed, we can conclude that the vaccine is ineffective in protecting drug users from contracting COVID-19.
+
+The odds ratio provides an estimate of the vaccine’s effectiveness. For drug users, the odds ratio is approximately 7, with a confidence interval ranging from 2.65 to 17.86.
 
 # Overall Results and Conclusions
+
