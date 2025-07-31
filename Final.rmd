@@ -14,15 +14,13 @@ date: "`r Sys.Date()`"
 require(tidyverse)
 require(tigerstats)
 require(forcats)
-OldData <-read.csv(file="finalSumr2024.csv",header=TRUE)
+FinalDat <-read.csv(file="finalSumr2024.csv",header=TRUE)
 #recode to remove the annoying "X" from the dataframe
-FinalData <- OldData %>% mutate(infected = recode(infected, aids = "covid", none = "OK" )) %>% select(-one_of("X"))
+FinalData <- FinalDat  %>% select(-one_of("X"))
 FinalData <- FinalData %>%
 mutate(across(where(is.character), as.factor))
-FinalData$treatment <- relevel(FinalData$treatment,ref="placebo")
-#FinalData$infected <- relevel(FinalData$infected,ref="OK")
-guy = filter(FinalData, sex =="M")
-gal = filter(FinalData, sex =="F")
+Males = filter(FinalData, sex =="M")
+Female = filter(FinalData, sex =="F")
 gay = filter(FinalData, LGBTQ =="gay")
 Druguser = filter(FinalData, DrugUser =="yes")
 ```
@@ -32,6 +30,22 @@ A new  preventative vaccine (covid921) is under test in clinical trials. Given t
 
 ## Males
 
+## Barplot  
+
+```{r}
+dd2 <- Males %>% group_by(infected,treatment) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
+# the group_by followed by summarize(count=n())
+
+basicC <- ggplot(dd2,aes(x=infected,y=count,fill=treatment))
+basicC + geom_bar(stat="identity",position="dodge")
+
+#Now for percentage plot
+
+basicCC <- ggplot(dd2,aes(x=infected,y=prcnt*100,fill=treatment)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```
+
+This plot illustrates the male population and their outcomes regarding COVID-19 contraction, based on whether they received the vaccine or a placebo. It shows that around 25% of those who were vaccinated still contracted COVID-19, whereas about 65% of those who received the placebo became infected. A significantly higher percentage of individuals who took the placebo contracted the virus compared to those who were vaccinated. These results suggest that the vaccine is effective in providing protection against COVID-19.
 
 ## Females
 
